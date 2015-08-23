@@ -1,0 +1,131 @@
+Time Series Data Analysis Of Daily Samples
+========================================================
+author: AA
+date: August 22, 2015
+
+Data Description
+========================================================
+transition: rotate
+
+
+- Time Series Data from a process with one point every day
+- Lots of missing data points (with an entry of 0 or 2)
+- Normal data in the range of 125 to 150
+- Data start date:  16 June 2007
+- Data end date: 13 Aug 2015 (When I took a snapshot)
+
+Project Goal
+========================================================
+
+- Visualize the data
+- Using simple plot function
+- Use it as prediction aid
+- Done using linear model and loess fitting
+- This presentation includes only sample data
+- Actual application accessible through: https://j2xl.shinyapps.io/finalcode
+- If you click on this link, please be patient there is a lot of data, and it
+takes time for the application to come up
+
+Sample Data (For one month - July 2015)
+========================================================
+
+```{r, echo=FALSE}
+require(xts)
+Date = c("1-Jul-15", "2-Jul-15", "3-Jul-15"
+,"4-Jul-15"
+, "5-Jul-15"
+, "6-Jul-15"
+, "7-Jul-15"
+, "8-Jul-15"
+, "9-Jul-15"
+, "10-Jul-15"
+, "11-Jul-15"
+, "12-Jul-15"
+, "13-Jul-15"
+, "14-Jul-15"
+, "15-Jul-15"
+, "16-Jul-15"
+, "17-Jul-15"
+, "18-Jul-15"
+, "19-Jul-15"
+, "20-Jul-15"
+, "21-Jul-15"
+, "22-Jul-15"
+, "23-Jul-15"
+, "24-Jul-15"
+, "25-Jul-15"
+, "26-Jul-15"
+, "27-Jul-15"
+, "28-Jul-15"
+, "29-Jul-15"
+, "30-Jul-15"
+, "31-Jul-15"
+)
+Data = c(137, 
+137, 
+137, 
+NA, 
+NA, 
+NA,
+137,
+NA,
+137,
+136.5,
+136.5,
+137,
+NA,
+137,
+NA,
+NA,
+136,
+NA,
+NA,
+136,
+NA,
+NA,
+136,
+136.5,
+136.5,
+NA,
+NA,
+NA,
+NA,
+137,
+137
+)
+
+myTsDF = data.frame(Date, Data)
+myTsDF[,2] = na.approx(myTsDF[,2])
+
+```
+```{r}
+nrow(myTsDF)
+summary(myTsDF)
+```
+
+Plot of Sample Data
+========================================================
+
+
+
+```{r, echo=FALSE}
+indx = 1:31
+myTsDF = data.frame(indx, myTsDF[,2])
+
+plot(myTsDF, type = 'l', xlab = "Day in July 2015",
+     ylab = "Data Value", main = 'Plot of data for July 2015')
+
+names(myTsDF) = c('Index', 'Data')
+reg=lm(Data ~ Index, data=myTsDF)
+abline(reg, col = 'red')
+              
+lo = loess(myTsDF$Data ~ myTsDF$Index)
+predict.lo = predict(lo)
+preDF = data.frame(myTsDF$Index, predict.lo)
+lines(preDF, col = "blue")
+```
+- Black is original data
+- Red is linear model fitting
+- Blue is loess fitting
+
+
